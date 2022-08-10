@@ -14,24 +14,17 @@
  * }
  */
 class Solution {
-    
-    public TreeNode SortedArrToBST(int[] arr,int i,int j){
-        
-        
-        if(i > j){
-            return null;
-        }
-        
-        int mid  = (i + j)/2;
-        TreeNode node = new TreeNode(arr[mid]);
-        
-        node.left=SortedArrToBST(arr,i,mid-1);
-        node.right=SortedArrToBST(arr,mid + 1,j);
-        
-        return node;
-    }
-    
     public TreeNode sortedArrayToBST(int[] nums) {
-        return SortedArrToBST(nums,0,nums.length-1) ;
+        if(nums.length == 0) return null;
+        return helper(nums, 0, nums.length - 1);    
+    }
+
+    private TreeNode helper(int[] nums, int i, int j) {
+        if(i > j) return null;
+        int mid = (i + j) / 2;
+        TreeNode root = new TreeNode(nums[mid]);
+        root.left = helper(nums, i, mid - 1);
+        root.right = helper(nums, mid + 1, j);
+        return root;
     }
 }
