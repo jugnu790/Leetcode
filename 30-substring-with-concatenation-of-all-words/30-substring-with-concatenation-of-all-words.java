@@ -1,35 +1,47 @@
-public class Solution {
+class Solution {
+
     public List<Integer> findSubstring(String s, String[] words) {
-        LinkedList<Integer> res = new LinkedList<>();
-        int n = words.length; // the number words
-        int l = words[0].length(); // the length of each word
-        HashMap<String, Integer> map = new HashMap<>();
-        for (String word : words) { // build map
-            int val = 1;
-            if (map.containsKey(word)) {
-                val += map.get(word);
-            }
-            map.put(word, val);
+        // Resultant list
+        List<Integer> indices = new ArrayList<>();
+        // Base conditions
+        if (s == null || s.isEmpty() || words == null || words.length == 0) {
+            return indices;
         }
-        for (int i = 0; i + n * l - 1 < s.length(); i++) {
-            HashMap<String, Integer> tmp = (HashMap<String, Integer>) map.clone();
-            for (int j = 0; j < n; j++) {
-                String str = s.substring(i + j * l, i + (j + 1) * l);
-                if (tmp.containsKey(str)) {
-                    int val = tmp.get(str);
-                    if (val > 1) {
-                        tmp.put(str, val - 1);
-                    } else {
-                        tmp.remove(str);
-                    }
-                } else {
-                    break;
-                }
+        // Store the words and their counts in a hash map
+        Map<String, Integer> wordCount = new HashMap<>();
+        for (String word : words) {
+            wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
+        }
+        // Length of each word in the words array`
+        int wordLength = words[0].length();
+        // Length of all the words combined in the array
+        int wordArrayLength = wordLength * words.length;
+        // Loop for the entire string
+        for (int i = 0; i <= s.length() - wordArrayLength; i++) {
+            // Get the substring of length equal to wordArrayLength
+            String current = s.substring(i, i + wordArrayLength);
+            // Map to store each word of the substring
+            Map<String, Integer> wordMap = new HashMap<>();
+            // Index to loop through the words array
+            int index = 0;
+            // Index to get each word in the current
+            int j = 0;
+            // Loop through each word of the words array
+            while (index < words.length) {
+                // Divide the current string into strings of length of
+                // each word in the array
+                String part = current.substring(j, j + wordLength);
+                // Put this string into the wordMap
+                wordMap.put(part, wordMap.getOrDefault(part, 0) + 1);
+                // Update j and index
+                j += wordLength;
+                index++;
             }
-            if (tmp.size() == 0) {
-                res.add(i);
+            // At this point compare the maps
+            if (wordCount.equals(wordMap)) {
+                indices.add(i);
             }
         }
-        return res;
+        return indices;
     }
 }
