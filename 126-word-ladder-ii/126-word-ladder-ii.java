@@ -1,72 +1,73 @@
 class Solution {
+    Map<String,List<String>> map;
+    List<List<String>> results;
     public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
-        Set<String> words = new HashSet<>(wordList);
-        List<List<String>> ans = new ArrayList<>();
-        if (!words.contains(endWord)) {
-            return ans;
-        }
-        
-        Map<String, List<String>> adjWords = new HashMap<>();
-        Map<String, Integer> dist = new HashMap<>();
-        bfs(beginWord, adjWords, dist, words);
-        dfs(endWord, beginWord, adjWords, dist, new ArrayList<>(), ans);
-        
-        return ans;
-    }
-    
-    public void bfs(String beginWord, Map<String, List<String>> adjWords, Map<String, Integer> dist, Set<String> words) {
+        results = new ArrayList<>();
+        if(wordList.size() ==0 || !wordList.contains(endWord)) return results;
+
+        int min = Integer.MAX_VALUE;
+
         Queue<String> queue = new LinkedList<>();
-        queue.offer(beginWord);
-        dist.put(beginWord, 0);
-        for (String word : words) {
-            adjWords.put(word, new ArrayList<>());
+        queue.add(beginWord);
+
+        map = new HashMap<String,List<String>>();
+        Map<String,Integer> ladder = new HashMap<>();  
+
+        for(String string : wordList){
+            ladder.put(string,Integer.MAX_VALUE);
         }
-        
-        while (!queue.isEmpty()) {
-            String cur = queue.poll();
-            List<String> neighbors = neighbors(cur, words);
-            for (String next : neighbors) {
-                adjWords.get(next).add(cur);
-                if (!dist.containsKey(next)) {
-                    dist.put(next, dist.get(cur) + 1);
-                    queue.offer(next);
+        ladder.put(beginWord,0);
+
+        while(!queue.isEmpty()){
+            String word = queue.poll();
+            int step = ladder.get(word) + 1;
+            if(step > min) 
+                break;
+
+            for(int i=0;i<word.length();i++){
+                StringBuilder sb = new StringBuilder(word);
+                for(char c = 'a';c<='z';c++){
+                    sb.setCharAt(i,c);
+                    String new_word = sb.toString();
+                    if(ladder.containsKey(new_word)){
+                        
+                        if(step > ladder.get(new_word))
+                            continue;
+                        else if(step < ladder.get(new_word)){
+                            queue.add(new_word);
+                            ladder.put(new_word,step);
+                        }
+                
+                        if(map.containsKey(new_word))
+                            map.get(new_word).add(word);
+                        else{
+                            List<String> list = new LinkedList<String>();
+                            list.add(word);
+                            map.put(new_word,list);
+                        }
+                        if(new_word.equals(endWord))
+                            min = step;
+                    }
                 }
             }
+
         }
-    } 
-    
-    public void dfs(String curWord, String beginWord,Map<String, List<String>> adjWords, Map<String, Integer> dist, List<String> path, List<List<String>> ans) {
-        path.add(curWord);
-        if (curWord.equals(beginWord)) {
-            Collections.reverse(path);
-            ans.add(new ArrayList<>(path));
-            Collections.reverse(path);
-        } else {
-            for (String next : adjWords.get(curWord)) {
-                if (dist.containsKey(next) && dist.get(curWord) == dist.get(next) + 1) {
-                    dfs(next, beginWord, adjWords, dist, path, ans);
-                }
-            }
-        }
-        
-        path.remove(path.size() - 1);
+        LinkedList<String> result = new LinkedList<String>();
+        backTrace(endWord, beginWord, result);
+        return results;
     }
-    
-    public List<String> neighbors(String word, Set<String> words) {
-        List<String> ans = new ArrayList<>();
-        char[] sc = word.toCharArray();
-        for (int i = 0; i < sc.length; i++) {
-            char cur = sc[i];
-            for (char c = 'a'; c <= 'z'; c++) {
-                sc[i] = c;
-                String temp = new String(sc);
-                if (words.contains(temp)) {
-                    ans.add(temp);
-                }
-            }
-            sc[i] = cur;
+
+    private void backTrace(String word, String start, List<String> list) {
+        if (word.equals(start)) {
+            list.add(0, start);
+            results.add(new ArrayList<String>(list));
+            list.remove(0);
+            return;
         }
-        
-        return ans;
+        list.add(0, word);
+        if (map.get(word) != null)
+            for (String s : map.get(word))
+                backTrace(s, start, list);
+        list.remove(0);
     }
 }
