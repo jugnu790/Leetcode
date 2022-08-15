@@ -1,56 +1,19 @@
-// leetcode 13 roman to integer
 class Solution {
     public int romanToInt(String s) {
-        int sum = 0;
-        int i = 0;
-        while (i < s.length()) {
-            if (s.charAt(i) == 'I') {
-                if (i + 1 < s.length() && s.charAt(i + 1) == 'V') {
-                    sum += 4;
-                    i += 2;
-                } else if (i + 1 < s.length() && s.charAt(i + 1) == 'X') {
-                    sum += 9;
-                    i += 2;
-                } else {
-                    sum += 1;
-                    i++;
-                }
-            } else if (s.charAt(i) == 'V') {
-                sum += 5;
-                i++;
-            } else if (s.charAt(i) == 'X') {
-                if (i + 1 < s.length() && s.charAt(i + 1) == 'L') {
-                    sum += 40;
-                    i += 2;
-                } else if (i + 1 < s.length() && s.charAt(i + 1) == 'C') {
-                    sum += 90;
-                    i += 2;
-                } else {
-                    sum += 10;
-                    i++;
-                }
-            } else if (s.charAt(i) == 'L') {
-                sum += 50;
-                i++;
-            } else if (s.charAt(i) == 'C') {
-                if (i + 1 < s.length() && s.charAt(i + 1) == 'D') {
-                    sum += 400;
-                    i += 2;
-                } else if (i + 1 < s.length() && s.charAt(i + 1) == 'M') {
-                    sum += 900;
-                    i += 2;
-                } else {
-                    sum += 100;
-                    i++;
-                }
-            } else if (s.charAt(i) == 'D') {
-                sum += 500;
-                i++;
-            } else if (s.charAt(i) == 'M') {
-                sum += 1000;
-                i++;
-            }
+      int ans = 0, num = 0;
+      for(int i = s.length() - 1; i >= 0; i --) {
+        switch(s.charAt(i)) {
+          case 'I' : num = 1; break;
+          case 'V' : num = 5; break;
+          case 'X' : num = 10; break;
+          case 'L' : num = 50; break;
+          case 'C' : num = 100; break;
+          case 'D' : num = 500; break;
+          case 'M' : num = 1000; break;
         }
-        return sum;    
+        if(4 * num < ans) ans -= num;
+        else ans += num;
+      }
+      return ans;
     }
 }
