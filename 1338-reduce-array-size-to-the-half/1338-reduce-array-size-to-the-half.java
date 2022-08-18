@@ -1,28 +1,31 @@
 class Solution {
-  public int minSetSize(int[] arr) {
-    final int n = arr.length;
-    int sum = 0;
-    Map<Integer, Integer> map = new HashMap<>();
-
-    for (final int a : arr)
-      map.merge(a, 1, Integer::sum);
-
-    int[][] count = new int[map.size()][2];
-    int i = 0;
-
-    for (final int key : map.keySet()) {
-      count[i][0] = key;
-      count[i++][1] = map.get(key);
+    public int minSetSize(int[] arr) {
+        HashMap<Integer,Integer> a = new HashMap<Integer,Integer>();
+        int res=0,sum=0;int count=0,sum1=0;
+        for(int i:arr){
+            if(a.containsKey(i)){
+                a.put(i,a.get(i)+1);
+            }
+            else
+                a.put(i,1);   
+            }
+        for (int f : a.values()) {
+             sum += f;
+          }
+        ArrayList<Integer> sortedValues
+            = new ArrayList<Integer>(a.values());
+ 
+        Collections.sort(sortedValues);
+        for(int i=sortedValues.size()-1;i>=0;i--){
+            sum1+=sortedValues.get(i);
+            res=sum-sum1;
+            if(res<=arr.length/2){
+                count++;
+                break;
+            }
+            else
+                count++;
+        }
+        return count;
     }
-
-    Arrays.sort(count, (c1, c2) -> c2[1] - c1[1]);
-
-    for (i = 0; i < count.length; ++i) {
-      sum += count[i][1];
-      if (sum >= n / 2)
-        return i + 1;
-    }
-
-    throw new IllegalArgumentException();
-  }
 }
