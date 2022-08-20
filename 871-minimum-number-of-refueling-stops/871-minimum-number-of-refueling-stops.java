@@ -1,20 +1,20 @@
 class Solution {
   public int minRefuelStops(int target, int startFuel, int[][] stations) {
-    int ans = 0;
-    int i = 0; 
-    int curr = startFuel;
-    Queue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+    Queue<Integer> queue = new PriorityQueue<>();
+        long dist = startFuel;
+        int res = 0;
+        int idx = 0;
+        while (true) {
+            while (idx < stations.length && stations[idx][0] <= dist) {
+                queue.offer(-stations[idx][1]);
+                idx++;
+            }
 
-    while (curr < target) {
-      
-      while (i < stations.length && curr >= stations[i][0])
-        maxHeap.offer(stations[i++][1]);
-      if (maxHeap.isEmpty()) 
-        return -1;
-      curr += maxHeap.poll(); 
-      ++ans;                  
+            if (dist >= target) return res;
+            if (queue.isEmpty()) return -1;
+            dist += -queue.poll();
+            res++;
+        }
+
     }
-
-    return ans;
-  }
 }
