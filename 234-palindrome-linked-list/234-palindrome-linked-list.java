@@ -19,15 +19,15 @@ class Solution {
             slow = slow.next;
             fast = fast.next.next;
         }
-        ListNode second = slow.next;
+        ListNode secondHead = slow.next;
         slow.next = null;
-        second = reverse(second);
-        while (head != null && second != null) {
-            if (head.val != second.val) {
+        secondHead = reverse(secondHead);
+        while (head != null && secondHead != null) {
+            if (head.val != secondHead.val) {
                 return false;
             }
             head = head.next;
-            second = second.next;
+            secondHead = secondHead.next;
         }
         return true;
     }
