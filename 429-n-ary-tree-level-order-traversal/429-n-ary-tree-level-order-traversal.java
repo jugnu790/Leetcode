@@ -1,22 +1,21 @@
 class Solution {
-  public List<List<Integer>> levelOrder(Node root) {
-    if (root == null)
-      return new ArrayList<>();
-
-    List<List<Integer>> ans = new ArrayList<>();
-    Queue<Node> q = new ArrayDeque<>(Arrays.asList(root));
-
-    while (!q.isEmpty()) {
-      List<Integer> currLevel = new ArrayList<>();
-      for (int sz = q.size(); sz > 0; --sz) {
-        Node node = q.poll();
-        currLevel.add(node.val);
-        for (Node child : node.children)
-          q.offer(child);
-      }
-      ans.add(currLevel);
+    public List<List<Integer>> levelOrder(Node root) {
+        List<List<Integer>> ans = new ArrayList<>();
+        if (root == null)
+            return ans;
+        Queue<Node> nodesQueue = new LinkedList<>();
+        nodesQueue.add(root);
+        while (!nodesQueue.isEmpty()) {
+            int size = nodesQueue.size();
+            List<Integer> level = new ArrayList<>();
+            while (size-- > 0) {
+                Node current = nodesQueue.remove();
+                for (Node child : current.children) 
+                    nodesQueue.add(child);
+                level.add(current.val);
+            }
+            ans.add(level);
+        }
+        return ans;
     }
-
-    return ans;
-  }
 }
