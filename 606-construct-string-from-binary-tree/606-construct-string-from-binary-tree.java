@@ -1,20 +1,36 @@
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
- */
-public class Solution {
+class Solution {
+
+    static StringBuilder sb;
+    static final char LEFT_BRACKET = '(';
+    static final char RIGHT_BRACKET = ')';
+
     public String tree2str(TreeNode t) {
-        if(t==null)
+        if (t == null) {
             return "";
-        if(t.left==null && t.right==null)
-            return t.val+"";
-        if(t.right==null)
-            return t.val+"("+tree2str(t.left)+")";
-        return t.val+"("+tree2str(t.left)+")("+tree2str(t.right)+")";   
+        }
+
+        sb = new StringBuilder();
+        recursive(t);
+
+        return sb.toString();
+    }
+
+    public void recursive(TreeNode node) {
+        sb.append(node.val);
+        if (node.left == null && node.right == null) {
+            return;
+        }
+        if (node.left == null) {
+            sb.append(LEFT_BRACKET).append(RIGHT_BRACKET);
+        } else {
+            sb.append(LEFT_BRACKET);
+            recursive(node.left);
+            sb.append(RIGHT_BRACKET);
+        }
+        if (node.right != null) {
+            sb.append(LEFT_BRACKET);
+            recursive(node.right);
+            sb.append(RIGHT_BRACKET);
+        }
     }
 }
