@@ -1,18 +1,30 @@
 class Solution {
    
     public int removeDuplicates(int[] nums) {
-        // Length of the updated array
-        int count = 0;
-        // Loop for all the elements in the array
-        for (int i = 0; i < nums.length; i++) {
-            // If the current element is equal to the next element, we skip
-            if (i < nums.length - 1 && nums[i] == nums[i + 1]) {
-                continue;
+        int count = 1;
+        int match = 0;
+        
+        for(int i=1;i<nums.length;i++){
+            
+            if(nums[i]==nums[i-1]){
+                match=match+1;
+                nums = leftshiftByOne(nums, i);
+                i--;
             }
-            // We will update the array in place
-            nums[count] = nums[i];
-            count++;
+            if(count == nums.length-1){
+               break;
+            }
+            count=count+1;
         }
-        return count;
+        
+         return  count-match+1;
+    }
+    
+    private int[] leftshiftByOne(int[] nums, int start){
+        for(int i=start;i<nums.length-1;i++){
+            nums[i]=nums[i+1];
+        }
+        
+        return nums;
     }
 }
