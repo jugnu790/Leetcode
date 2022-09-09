@@ -3,10 +3,10 @@ class Solution {
         Arrays.sort(nums);
         return kSum(nums, target, 0, 4);
     }
-    
+	
     public List<List<Integer>> kSum(int[] nums, long target, int start, int k) {
         List<List<Integer>> res = new ArrayList<>();
-        
+
         // If we have run out of numbers to add, return res.
         if (start == nums.length) {
             return res;
@@ -38,20 +38,22 @@ class Solution {
     
         return res;
     }
-        
+	
     public List<List<Integer>> twoSum(int[] nums, long target, int start) {
         List<List<Integer>> res = new ArrayList<>();
-        Set<Long> s = new HashSet<>();
+        int lo = start, hi = nums.length - 1;
     
-        for (int i = start; i < nums.length; ++i) {
-            if (res.isEmpty() || res.get(res.size() - 1).get(1) != nums[i]) {
-                if (s.contains(target - nums[i])) {
-                    res.add(Arrays.asList((int)target - nums[i], nums[i]));
-                }
+        while (lo < hi) {
+            int currSum = nums[lo] + nums[hi];
+            if (currSum < target || (lo > start && nums[lo] == nums[lo - 1])) {
+                ++lo;
+            } else if (currSum > target || (hi < nums.length - 1 && nums[hi] == nums[hi + 1])) {
+                --hi;
+            } else {
+                res.add(Arrays.asList(nums[lo++], nums[hi--]));
             }
-            s.add((long)nums[i]);
         }
-                                                  
+                                                          
         return res;
     }
 }
