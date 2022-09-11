@@ -1,18 +1,22 @@
 class Solution {
     public int maxPerformance(int n, int[] speed, int[] efficiency, int k) {
-        int[][] ord = new int[n][2];
-        for (int i = 0; i < n; i++)
-            ord[i] = new int[] {efficiency[i], speed[i]};
-        Arrays.sort(ord, (a, b) -> Integer.compare(b[0], a[0]));
-        PriorityQueue<Integer> sppq = new PriorityQueue<>();
-        long totalSpeed = 0, best = 0;
-        for (int[] pair : ord) {
-            int spd = pair[1];
-            sppq.add(spd);
-            if (sppq.size() <= k) totalSpeed += spd;
-            else totalSpeed += spd - sppq.poll();
-            best = Math.max(best, totalSpeed * pair[0]);
+        int[][] arr = new int[n][2];
+        for (int i = 0; i < n; i++) {
+            arr[i][0] = efficiency[i];
+            arr[i][1] = speed[i];
         }
-        return (int)(best % 1000000007);
+        Arrays.sort(arr, (a, b) -> b[0] - a[0]);
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        long sum = 0;
+        long res = 0;
+        for (int i = 0; i < n; i++) {
+            pq.add(arr[i][1]);
+            sum += arr[i][1];
+            if (pq.size() > k) {
+                sum -= pq.poll();
+            }
+            res = Math.max(res, sum * arr[i][0]);
+        }
+        return (int) (res % 1000000007);      
     }
 }
