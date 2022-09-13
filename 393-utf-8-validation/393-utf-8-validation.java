@@ -1,24 +1,42 @@
 class Solution {
-    public boolean validUtf8(int[] data) {
-        int count = 0;
-        for (int i = 0; i < data.length; i++) {
-            if (count == 0) {
-                if ((data[i] >> 5) == 0b110) {
-                    count = 1;
-                } else if ((data[i] >> 4) == 0b1110) {
-                    count = 2;
-                } else if ((data[i] >> 3) == 0b11110) {
-                    count = 3;
-                } else if ((data[i] >> 7) == 1) {
-                    return false;
-                }
-            } else {
-                if ((data[i] >> 6) != 0b10) {
-                    return false;
-                }
-                count--;
-            }
+  public boolean validUtf8(int[] data) {
+
+   
+    int numberOfBytesToProcess = 0;
+
+    
+    for (int i = 0; i < data.length; i++) {
+
+     
+      String binRep = Integer.toBinaryString(data[i]);
+      binRep =binRep.length() >= 8? binRep.substring(binRep.length() - 8):"00000000".substring(binRep.length() % 8) + binRep;
+                                  
+      
+      if (numberOfBytesToProcess == 0) {
+        for (int j = 0; j < binRep.length(); j++) {
+          if (binRep.charAt(j) == '0') {
+            break;
+          }
+
+          numberOfBytesToProcess += 1;
         }
-        return count == 0;
+
+        if (numberOfBytesToProcess == 0) {
+          continue;
+        }
+        if (numberOfBytesToProcess > 4 || numberOfBytesToProcess == 1) {
+          return false;
+        }
+
+      } else {
+
+       
+        if (!(binRep.charAt(0) == '1' && binRep.charAt(1) == '0')) {
+          return false;
+        }
+      }
+      numberOfBytesToProcess -= 1;
     }
+    return numberOfBytesToProcess == 0;
+  }
 }
