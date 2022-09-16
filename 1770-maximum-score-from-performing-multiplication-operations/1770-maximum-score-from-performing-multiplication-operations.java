@@ -1,24 +1,24 @@
 class Solution {
-    Map<Integer, Map<Integer, Integer>> cache = new HashMap<>();
-    
-    public int maximumScore(int[] nums, int[] multipliers) {
-        int l = 0, r = nums.length-1;
-        int score = 0;
-        
-        return dfs(nums, multipliers, l ,r, 0);
-    }  
-    
-    int dfs(int[] nums, int[] multipliers, int l, int r, int k) {
-        if(k >= multipliers.length) return 0;
-        if(cache.containsKey(l) && cache.get(l).containsKey(r)) return cache.get(l).get(r);
-              
-        int res = Math.max(
-            multipliers[k] * nums[l] + dfs(nums, multipliers, l + 1, r, k+1),
-            multipliers[k] * nums[r] + dfs(nums, multipliers, l, r - 1, k+1)
-        );
-        if(!cache.containsKey(l)) cache.put(l, new HashMap<>());
-        cache.get(l).put(r, res);
-        return res;
-    }
-    
+  public int maximumScore(int[] nums, int[] multipliers) {
+    // dp[s][i] := max score of nums[s..e] and multipliers[i],
+    dp = new Integer[multipliers.length][multipliers.length];
+    return maximumScore(nums, 0, multipliers, 0);
+  }
+
+  private Integer[][] dp;
+
+  int maximumScore(int[] nums, int s, int[] multipliers, int i) {
+    if (i == multipliers.length)
+      return 0;
+    if (dp[s][i] != null)
+      return dp[s][i];
+
+    // # of nums picked on the start side = s,
+    // # of nums picked on the end side = i - s,
+    // so e = n - (i - s) - 1
+    final int e = nums.length - (i - s) - 1;
+    final int pickStart = nums[s] * multipliers[i] + maximumScore(nums, s + 1, multipliers, i + 1);
+    final int pickEnd = nums[e] * multipliers[i] + maximumScore(nums, s, multipliers, i + 1);
+    return dp[s][i] = Math.max(pickStart, pickEnd);
+  }
 }
