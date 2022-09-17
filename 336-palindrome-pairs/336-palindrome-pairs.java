@@ -1,52 +1,52 @@
-class Solution {
-    private static class TrieNode {
-        private int index = -1;
-        private TrieNode[] next = new TrieNode[26];
-        private List<Integer> indices = new ArrayList<>();
-    }
-
+public class Solution {
     public List<List<Integer>> palindromePairs(String[] words) {
-        List<List<Integer>> res = new ArrayList<>();
-        if (words == null || words.length < 2) return res;
-        TrieNode root = new TrieNode();
-        for (int i = 0; i < words.length; i++) {
-            buildTrie(root, words[i], i);
+        HashMap<String, Integer> index = new HashMap<String, Integer>();
+        for (int i = 0; i < words.length; i ++) {
+            index.put(words[i], i);
         }
-        for (int i = 0; i < words.length; i++) {
-            search(root, words[i], i, res);
+        List<List<Integer>> res = new LinkedList<List<Integer>>();
+        for (int i = 0; i < words.length; i ++) {
+            String reverse = new StringBuilder(words[i]).reverse().toString();
+            int start = 0, end = reverse.length();
+            if (index.containsKey(reverse) && index.get(reverse) != i) {
+                List<Integer> tmp = new LinkedList<Integer>();
+                tmp.add(index.get(reverse));
+                tmp.add(i);
+                res.add(tmp);
+                start ++;
+                end --;
+            }
+
+            for (int j = start; j <= end; j ++) {
+                String left = reverse.substring(0, j);
+                String right = reverse.substring(j);
+                if (index.containsKey(left) && index.get(left) != i && isPa(right)) {
+                    List<Integer> tmp = new LinkedList<Integer>();
+                    tmp.add(index.get(left));
+                    tmp.add(i);
+                    res.add(tmp);
+                }
+                if (index.containsKey(right) && index.get(right) != i && isPa(left)) {
+                    List<Integer> tmp = new LinkedList<Integer>();
+                    tmp.add(i);
+                    tmp.add(index.get(right));
+                    res.add(tmp);
+                }
+            }
         }
         return res;
     }
-
-    private void buildTrie(TrieNode root, String word, int i) {
-        // creating trie from reversed word
-        for (int j = word.length() - 1; j >= 0; j--) {
-            int id = word.charAt(j) - 'a';
-            if (root.next[id] == null) root.next[id] = new TrieNode();
-            if (isPalindrome(word, 0, j)) root.indices.add(i);
-            root = root.next[id];
+    private boolean isPa(String s) {
+        if (s.equals("")) {
+            return true;
         }
-        root.index = i;
-        root.indices.add(i);
-    }
-
-    private void search(TrieNode root, String word, int i, List<List<Integer>> res) {
-        for (int j = 0; j < word.length(); j++) {
-            if (root.index >= 0 && root.index != i && isPalindrome(word, j, word.length() - 1)) {
-                res.add(Arrays.asList(i, root.index));
+        int left = 0, right = s.length() - 1;
+        while (left < right) {
+            if (s.charAt(left) != s.charAt(right)) {
+                return false;
             }
-            root = root.next[word.charAt(j) - 'a'];
-            if (root == null) return;
-        }
-        for (int id : root.indices) {
-            if (id == i) continue;
-            res.add(Arrays.asList(i, id));
-        }
-    }
-
-    private boolean isPalindrome(String s, int i, int j) {
-        while (i < j) {
-            if (s.charAt(i++) != s.charAt(j--)) return false;
+            left ++;
+            right --;
         }
         return true;
     }
