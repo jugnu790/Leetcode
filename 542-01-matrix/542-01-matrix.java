@@ -1,35 +1,34 @@
 class Solution {
-    public int[][] updateMatrix(int[][] matrix) {
-        int m = matrix.length;
-        int n = matrix[0].length;
-        
-        Queue<int[]> queue = new LinkedList<>();
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (matrix[i][j] == 0) {
-                    queue.offer(new int[] {i, j});
-                }
-                else {
-                    matrix[i][j] = Integer.MAX_VALUE;
-                }
-            }
-        }
-        
-        int[] dirs = {-1, 0, 1, 0, -1};
-        
-        while (!queue.isEmpty()) {
-            int[] cell = queue.poll();
-            for (int i = 0; i < 4; i++) {
-                int r = cell[0] + dirs[i];
-                int c = cell[1] + dirs[i + 1];
-                if (r < 0 || r >= m || c < 0 || c >= n || 
-                    matrix[r][c] <= matrix[cell[0]][cell[1]] + 1) continue;
-                queue.add(new int[] {r, c});
-                matrix[r][c] = matrix[cell[0]][cell[1]] + 1;
-            }
-        }
-        
-        return matrix;
-    }
-}
+  public int[][] updateMatrix(int[][] mat) {
+    final int m = mat.length;
+    final int n = mat[0].length;
+    final int[] dirs = new int[] {0, 1, 0, -1, 0};
+    Queue<int[]> q = new ArrayDeque<>();
+    boolean[][] seen = new boolean[m][n];
 
+    for (int i = 0; i < m; ++i)
+      for (int j = 0; j < n; ++j)
+        if (mat[i][j] == 0) {
+          q.offer(new int[] {i, j});
+          seen[i][j] = true;
+        }
+
+    while (!q.isEmpty()) {
+      final int i = q.peek()[0];
+      final int j = q.poll()[1];
+      for (int k = 0; k < 4; ++k) {
+        final int x = i + dirs[k];
+        final int y = j + dirs[k + 1];
+        if (x < 0 || x == m || y < 0 || y == n)
+          continue;
+        if (seen[x][y])
+          continue;
+        mat[x][y] = mat[i][j] + 1;
+        q.offer(new int[] {x, y});
+        seen[x][y] = true;
+      }
+    }
+
+    return mat;
+  }
+}
