@@ -1,60 +1,36 @@
-class UnionFind {
-    int[] parent;
-    int[] rank;
-
-    public UnionFind(int size) {
-        parent = new int[size];
-        for (int i = 0; i < size; i++)
-            parent[i] = i;
-        rank = new int[size];
-    }
-
-    public int find(int x) {
-        if (parent[x] != x)
-            parent[x] = find(parent[x]);
-        return parent[x];
-    }
-
-    public void union_set(int x, int y) {
-        int xset = find(x), yset = find(y);
-        if (xset == yset) {
-            return;
-        } else if (rank[xset] < rank[yset]) {
-            parent[xset] = yset;
-        } else if (rank[xset] > rank[yset]) {
-            parent[yset] = xset;
-        } else {
-            parent[yset] = xset;
-            rank[xset]++;
-        }
-    }
-}
-
 class Solution {
-    public boolean isSimilar(String a, String b) {
-        int diff = 0;
-        for (int i = 0; i < a.length(); i++) {
-            if (a.charAt(i) != b.charAt(i)) {
-                diff++;
-            }
-        }
-        return diff == 0 || diff == 2;
-    }
-
     public int numSimilarGroups(String[] strs) {
-        int n = strs.length;
-        UnionFind dsu = new UnionFind(n);
-        int count = n;
-        // Form the required graph from the given strings array.
-        for (int i = 0; i < n; i++) {
-            for (int j = i + 1; j < n; j++) {
-                if (isSimilar(strs[i], strs[j]) && dsu.find(i) != dsu.find(j)) {
-                    count--;
-                    dsu.union_set(i, j);
-                }
+        boolean[] visited = new boolean[strs.length];
+        int res=0;
+        
+        for(int i=0; i<strs.length; i++){
+            if(!visited[i]){
+                res++; // as soon as we get inside, we see a new group
+                dfs(strs, visited, i);
             }
         }
-
-        return count;
+        return res;
+    }
+    
+    private void dfs(String[] strs, boolean[] visited, int index){  
+        visited[index] = true; // as soon as we get into recursion, the string is marked as visited (recursion satisfies the criteria of isSimilar so meaning same group)
+        String curr = strs[index];
+        
+        for(int i=0; i<strs.length; i++){     
+            if(!visited[i] && isSimilar(curr, strs[i])){
+                dfs(strs, visited, i);
+            }      
+        }
+    }
+    
+    
+    private boolean isSimilar(String s1, String s2) {
+        int diff = 0;
+        for(int i = 0; i < s1.length(); i++) {
+            if(s1.charAt(i) != s2.charAt(i)) // if at any 'i', chars mismatch, then add diff
+                diff++;
+        }
+        
+        return (diff == 2 || diff == 0); // similar only of they are identical (diff == 0) or 2 diff (so that we can do 1 swap)
     }
 }
